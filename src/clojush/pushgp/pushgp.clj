@@ -128,13 +128,16 @@
           :print-homology-data false ; If true, prints the homology statistics
           ;;
           ;;----------------------------------------
-          ;; Arguments related to printing JSON or CSV logs
+          ;; Arguments related to printing JSON, EDN, or CSV logs
           ;;----------------------------------------
           :print-csv-logs false ;; Prints a CSV log of the population each generation
+          :print-edn-logs true ;; Prints an EDN log of the run
           :print-json-logs false ;; Prints a JSON log of the population each generation
           :csv-log-filename "log.csv" ;; The file to print CSV log to
+          :edn-log-filename "log.edn" ;; The file to print EDN log to
           :json-log-filename "log.json" ;; The file to print JSON log to
           :csv-columns [:generation :location :total-error :push-program-size] ;; The columns to include in a printed CSV beyond the generation and individual. Options include: [:generation :location :parent-uuids :genetic-operators :push-program-size :plush-genome-size :push-program :plush-genome :total-error :test-case-errors]
+          :edn-keys [:generation :genome :total-error :errors :parent-uuids] ;; The keys to include in the map of each individual when logging to edn
           :log-fitnesses-for-all-cases false ;; If true, the CSV and JSON logs will include the fitnesses of each individual on every test case
           :json-log-program-strings false ;; If true, JSON logs will include program strings for each individual
           )))
