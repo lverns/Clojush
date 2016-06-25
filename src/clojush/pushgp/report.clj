@@ -107,15 +107,14 @@
 
 (defn edn-print
   [population generation edn-log-filename keys]
-  ;; This code is bad because we open the writer and close it for
-  ;; every line. We should be opening only once per generation
-  (doall (map (fn [individual]
-                (spit edn-log-filename
-                      (prn-str (select-keys
-                                (conj individual [:generation generation])
-                                keys))
-                      :append true))
-              population)))
+  (with-open [w (io/writer edn-log-filename :append true)] ;; Opens and closes the file once per call
+    (doall
+     (map (fn [individual]
+            (.write w
+                    (prn-str (select-keys
+                              (conj individual [:generation generation])
+                              keys))))
+          population))))
 
 (defn jsonize-individual
   "Takes an individual and returns it with only the items of interest
