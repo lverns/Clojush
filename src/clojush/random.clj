@@ -50,22 +50,19 @@
                           close-parens-probabilities [0.772 0.206 0.021 0.001]
                           silent-instruction-probability 0}}]
     (let [markers (conj epigenetic-markers :instruction)]
-      (zipmap markers
-              (map (fn [marker]
-                     (case marker
-                       :instruction (let [element (lrand-nth atom-generators)]
-                                      (if (fn? element)
-                                        (let [fn-element (element)]
-                                          (if (fn? fn-element)
-                                            (fn-element)
-                                            fn-element))
-                                        element))
-                       :close (random-closes close-parens-probabilities)
-                       :silent (if (< (lrand) silent-instruction-probability)
-                                 true
-                                 false)
-                       ))
-                   markers)))))
+      (select-keys  {:instruction (let [element (lrand-nth atom-generators)]
+                                    (if (fn? element)
+                                      (let [fn-element (element)]
+                                        (if (fn? fn-element)
+                                          (fn-element)
+                                          fn-element))
+                                      element))
+                     :uuid (java.util.UUID/randomUUID)
+                     :close (random-closes close-parens-probabilities)
+                     :silent (if (< (lrand) silent-instruction-probability)
+                               true
+                               false)}
+                    markers))))
 
 (defn random-plush-genome-with-size
   "Returns a random Plush genome containing the given number of points."
