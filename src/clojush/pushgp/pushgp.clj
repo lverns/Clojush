@@ -128,13 +128,17 @@
           :print-homology-data false ; If true, prints the homology statistics
           ;;
           ;;----------------------------------------
-          ;; Arguments related to printing JSON or CSV logs
+          ;; Arguments related to printing JSON, EDN, or CSV logs
           ;;----------------------------------------
           :print-csv-logs false ;; Prints a CSV log of the population each generation
+          :print-edn-logs true ;; Prints an EDN log of the run
           :print-json-logs false ;; Prints a JSON log of the population each generation
           :csv-log-filename "log.csv" ;; The file to print CSV log to
+          :edn-log-filename "log.edn" ;; The file to print EDN log to
           :json-log-filename "log.json" ;; The file to print JSON log to
           :csv-columns [:generation :location :total-error :push-program-size] ;; The columns to include in a printed CSV beyond the generation and individual. Options include: [:generation :location :parent-uuids :genetic-operators :push-program-size :plush-genome-size :push-program :plush-genome :total-error :test-case-errors]
+          :edn-keys [:uuid :generation :parent-uuids :genetic-operators :program :genome :total-error :errors] ;; Keys from clojush.individual.individual that should be included + :generation if desire
+          ;; :edn-additional-keys [ ] ;; additional information to include in the edn-printout. We can calculate :location, :push-program-size, and :plush-genome-size on the recieving end if we really want them
           :log-fitnesses-for-all-cases false ;; If true, the CSV and JSON logs will include the fitnesses of each individual on every test case
           :json-log-program-strings false ;; If true, JSON logs will include program strings for each individual
           )))
@@ -286,6 +290,7 @@ into @push-argmap first."
       (initial-report) ;; Print the inital report
       (print-params @push-argmap)
       (check-genetic-operator-probabilities-add-to-one @push-argmap)
+      (spit (:edn-log-filename @push-argmap) "" ) ;; This is a little hacky, and it happens whether or not edn logging was enabled(!)
       (timer @push-argmap :initialization)
       (println "\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
       (println "\nGenerating initial population...")

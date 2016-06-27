@@ -105,6 +105,17 @@
                                               (:errors individual))))
                           population)))))
 
+(defn edn-print
+  [population generation edn-log-filename keys]
+  (with-open [w (io/writer edn-log-filename :append true)] ;; Opens and closes the file once per call
+    (doall
+     (map (fn [individual]
+            (.write w "#clojush/individual")
+            (.write w (prn-str (select-keys
+                                (conj individual [:generation generation])
+                                keys))))
+          population))))
+
 (defn jsonize-individual
   "Takes an individual and returns it with only the items of interest
    for the json logs."
@@ -251,6 +262,7 @@
            ;; The following are for CSV or JSON logs
            print-csv-logs print-json-logs csv-log-filename json-log-filename
            log-fitnesses-for-all-cases json-log-program-strings
+           print-edn-logs edn-keys edn-log-filename
            ]
     :as argmap}]
   (println)
@@ -416,6 +428,9 @@
     (when print-csv-logs (csv-print population generation argmap))
     (when print-json-logs (json-print population generation json-log-filename
                                       log-fitnesses-for-all-cases json-log-program-strings))
+    ;; Code style question: should I style the call to print-edn-logs after
+    ;; print-csv-logs or print-json-logs ???
+    (when print-edn-logs (edn-print population generation edn-log-filename edn-keys))
     (cond (or (<= (:total-error best) error-threshold)
               (:success best)) [:success best]
           (>= generation max-generations) [:failure best]
