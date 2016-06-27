@@ -110,10 +110,10 @@
   (with-open [w (io/writer edn-log-filename :append true)] ;; Opens and closes the file once per call
     (doall
      (map (fn [individual]
-            (.write w
-                    (prn-str (select-keys
-                              (conj individual [:generation generation])
-                              keys))))
+            (.write w "#clojush/individual")
+            (.write w (prn-str (select-keys
+                                (conj individual [:generation generation])
+                                keys))))
           population))))
 
 (defn jsonize-individual
