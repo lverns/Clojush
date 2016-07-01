@@ -131,7 +131,7 @@
           ;; Arguments related to printing JSON, EDN, or CSV logs
           ;;----------------------------------------
           :print-csv-logs false ;; Prints a CSV log of the population each generation
-          :print-edn-logs true ;; Prints an EDN log of the run
+          :print-edn-logs false ;; Prints an EDN log of the run
           :print-json-logs false ;; Prints a JSON log of the population each generation
           :csv-log-filename "log.csv" ;; The file to print CSV log to
           :edn-log-filename "log.edn" ;; The file to print EDN log to
