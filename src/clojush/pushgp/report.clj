@@ -439,7 +439,7 @@
 
 (defn initial-report
   "Prints the initial report of a PushGP run."
-  []
+  [push-argmap]
   (println "Registered instructions:" @registered-instructions)
   (println "Starting PushGP run.")
   (printf "Clojush version = ")
@@ -472,7 +472,18 @@
     (catch Exception e
            (printf "Hash of last Git commit = unavailable\n")
            (printf "GitHub link = unavailable\n")
-           (flush))))
+           (flush)))
+  (if (:print-edn-logs push-argmap)
+    ;; The edn log is overwritten if it exists
+    (with-open [w (io/writer (:edn-log-filename push-argmap) :append false)]
+      (.write w "#clojush/run")
+      (.write w (prn-str (dissoc push-argmap
+                                 ;; These keys have functions
+                                 :atom-generators
+                                 :error-function
+                                 :problem-specific-report
+                                 :random-seed))))))
+
 
 (defn final-report
   "Prints the final report of a PushGP run if the run is successful."

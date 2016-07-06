@@ -289,10 +289,9 @@ into @push-argmap first."
     (random/with-rng (random/make-mersennetwister-rng (:random-seed @push-argmap))
       ;; set globals from parameters
       (reset-globals)
-      (initial-report) ;; Print the inital report
+      (initial-report @push-argmap) ;; Print the inital report
       (print-params @push-argmap)
       (check-genetic-operator-probabilities-add-to-one @push-argmap)
-      (spit (:edn-log-filename @push-argmap) "" ) ;; This is a little hacky, and it happens whether or not edn logging was enabled(!)
       (timer @push-argmap :initialization)
       (println "\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
       (println "\nGenerating initial population...")
