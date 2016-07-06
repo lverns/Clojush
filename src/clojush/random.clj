@@ -49,7 +49,7 @@
                      :or {epigenetic-markers []
                           close-parens-probabilities [0.772 0.206 0.021 0.001]
                           silent-instruction-probability 0}}]
-    (let [markers (conj epigenetic-markers :instruction)]
+    (let [markers (conj epigenetic-markers :instruction :tracing)]
       (select-keys  {:instruction (let [element (lrand-nth atom-generators)]
                                     (if (fn? element)
                                       (let [fn-element (element)]
@@ -61,7 +61,8 @@
                      :close (random-closes close-parens-probabilities)
                      :silent (if (< (lrand) silent-instruction-probability)
                                true
-                               false)}
+                               false)
+                     :tracing {:operator :random}}
                     markers))))
 
 (defn random-plush-genome-with-size
