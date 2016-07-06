@@ -34,7 +34,8 @@
                           'integer_mult
                           'integer_add
                           'integer_sub)
-   :epigenetic-markers [:uuid]
+   ;; :epigenetic-markers [:uuid]
+   :epigenetic-markers []
    :parent-selection :lexicase
    :genetic-operator-probabilities {:alternation 1}
    :replace-child-that-exceeds-size-limit-with :truncate

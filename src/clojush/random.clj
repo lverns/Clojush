@@ -57,7 +57,7 @@
                                           (fn-element)
                                           fn-element))
                                       element))
-                     :uuid (java.util.UUID/randomUUID)
+                     ;; :uuid (java.util.UUID/randomUUID)
                      :close (random-closes close-parens-probabilities)
                      :silent (if (< (lrand) silent-instruction-probability)
                                true
