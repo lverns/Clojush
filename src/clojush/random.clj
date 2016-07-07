@@ -62,7 +62,7 @@
                      :silent (if (< (lrand) silent-instruction-probability)
                                true
                                false)
-                     :tracing {:operator :random}}
+                     :tracing {:changes :random}}
                     markers))))
 
 (defn random-plush-genome-with-size

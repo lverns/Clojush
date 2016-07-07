@@ -177,7 +177,7 @@ given by uniform-deletion-rate."
                                 use-s1
                                 (conj result-genome (assoc
                                                      (nth (if use-s1 s1 s2) i)
-                                                     :tracing {:operator :alternation
+                                                     :tracing {:changes :copy
                                                                :parent (if use-s1 0 1)
                                                                :position i}))))))]
     (make-individual :genome new-genome
