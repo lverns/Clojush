@@ -72,13 +72,22 @@
                                         (string? const) (string-tweak const)
                                         (or (= const true) (= const false)) (lrand-nth [true false])
                                         :else (:instruction (first (random-plush-genome 1 atom-generators argmap))))))))
-        token-mutator (fn [token]
+        token-mutator (fn [index token]
                         (if (< (lrand) uniform-mutation-rate)
-                          (if (< (lrand) uniform-mutation-constant-tweak-rate)
-                            (constant-mutator token)
-                            (instruction-mutator token))
-                          token))
-        new-genome (map token-mutator (:genome ind))]
+                          (assoc
+                           (if (< (lrand) uniform-mutation-constant-tweak-rate)
+                             (constant-mutator token)
+                             (instruction-mutator token))
+                           :tracing {:changes :uniform-mutation
+                                     :parent 0 ;; <-- assumes non-chained operators!
+                                     :position index
+                                     })
+                          (assoc token
+                                 :tracing {:changes :copy
+                                           :parent 0 ;; <-- assumes non-chained operators!
+                                           :position index
+                                           })))
+        new-genome (map-indexed token-mutator (:genome ind))]
     (make-individual :genome new-genome
                      :history (:history ind)
                      :ancestors (if maintain-ancestors
