@@ -106,14 +106,22 @@
                           population)))))
 
 (defn edn-print
-  [population generation edn-log-filename keys]
+  "Takes a population and appends all the individuals to the EDN log file.
+   If the internal representation of individuals changes in future versions
+   of Clojush, this code will likely continue to work, but will produce
+   output corresponding to the new representation."
+  [population generation edn-log-filename keys additional-keys]
   (with-open [w (io/writer edn-log-filename :append true)] ;; Opens and closes the file once per call
     (doall
-     (map (fn [individual]
-            (.write w "#clojush/individual")
-            (.write w (prn-str (select-keys
-                                (conj individual [:generation generation])
-                                keys))))
+     (map-indexed (fn [index individual]
+            (let [additional-data {:generation generation
+                                   :location index
+                                   :push-program-size (count-points (:program individual))
+                                   :plush-genome-size (count (:genome individual))}]
+              (.write w "#clojush/individual")
+              (.write w (prn-str (merge
+                                  (select-keys additional-data additional-keys)
+                                  (select-keys individual keys))))))
           population))))
 
 (defn jsonize-individual
@@ -262,7 +270,7 @@
            ;; The following are for CSV or JSON logs
            print-csv-logs print-json-logs csv-log-filename json-log-filename
            log-fitnesses-for-all-cases json-log-program-strings
-           print-edn-logs edn-keys edn-log-filename
+           print-edn-logs edn-keys edn-log-filename edn-additional-keys
            ]
     :as argmap}]
   (println)
@@ -430,7 +438,7 @@
                                       log-fitnesses-for-all-cases json-log-program-strings))
     ;; Code style question: should I style the call to print-edn-logs after
     ;; print-csv-logs or print-json-logs ???
-    (when print-edn-logs (edn-print population generation edn-log-filename edn-keys))
+    (when print-edn-logs (edn-print population generation edn-log-filename edn-keys edn-additional-keys))
     (cond (or (<= (:total-error best) error-threshold)
               (:success best)) [:success best]
           (>= generation max-generations) [:failure best]
