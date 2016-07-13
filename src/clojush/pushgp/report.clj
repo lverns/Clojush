@@ -436,8 +436,6 @@
     (when print-csv-logs (csv-print population generation argmap))
     (when print-json-logs (json-print population generation json-log-filename
                                       log-fitnesses-for-all-cases json-log-program-strings))
-    ;; Code style question: should I style the call to print-edn-logs after
-    ;; print-csv-logs or print-json-logs ???
     (when print-edn-logs (edn-print population generation edn-log-filename edn-keys edn-additional-keys))
     (cond (or (<= (:total-error best) error-threshold)
               (:success best)) [:success best]
