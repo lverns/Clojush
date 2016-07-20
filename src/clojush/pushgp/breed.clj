@@ -35,7 +35,7 @@
     :empty (make-individual :genome '() :genetic-operators :empty)
     :truncate (assoc child :genome (take (/ max-points 4) (:genome child)))
     :random (make-individual :genome (random-plush-genome max-genome-size-in-initial-program atom-generators argmap)
-                             :genetic-operators :random)
+                             :is-random-replacement true)
     ))
 
 (defn revert-to-parent-if-worse
@@ -93,12 +93,12 @@
         child (perform-genetic-operator-list operator-vector
                                              (assoc first-parent :parent-uuids (vector (:uuid first-parent)))
                                              population location rand-gen argmap)]
-    (if (> (count (:genome child))
-           (/ max-points 4)) ; Check if too big
-      (revert-too-big-child first-parent child argmap)
-        (assoc child
-               :genetic-operators operator
-               ))))
+    (assoc
+     (if (> (count (:genome child))
+            (/ max-points 4))
+       (revert-too-big-child first-parent child argmap)
+       child)
+     :genetic-operators operator)))
 
 (defn breed
   "Returns an individual bred from the given population using the given parameters."
