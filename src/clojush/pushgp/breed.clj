@@ -120,9 +120,10 @@
    location rand-gen population
    {:keys [genetic-operator-probabilities] :as argmap}]
   (random/with-rng rand-gen
-    (let [prob (lrand)]
-      (loop [vectored-go-probabilities (reductions #(assoc %2 1 (+ (second %1) (second %2)))
-                                                   (vec genetic-operator-probabilities))]
-        (if (<= prob (second (first vectored-go-probabilities)))
-          (perform-genetic-operator (first (first vectored-go-probabilities)) population location rand-gen argmap)
-          (recur (rest vectored-go-probabilities)))))))
+    (let [prob (lrand)
+          genetic-operator (some
+                            (fn [[operator probability]] (if (<= prob probability) operator))
+                            (reductions
+                             #(assoc %2 1 (+ (second %1) (second %2)))
+                             (vec genetic-operator-probabilities)))]
+      (perform-genetic-operator genetic-operator population location rand-gen argmap))))
