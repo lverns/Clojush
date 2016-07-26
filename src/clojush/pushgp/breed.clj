@@ -126,4 +126,5 @@
                             (reductions
                              #(assoc %2 1 (+ (second %1) (second %2)))
                              (vec genetic-operator-probabilities)))]
-      (perform-genetic-operator genetic-operator population location rand-gen argmap))))
+      (update-instruction-map-uuids
+       (perform-genetic-operator genetic-operator population location rand-gen argmap)))))
