@@ -100,6 +100,20 @@
                :genetic-operators operator
                ))))
 
+(defn update-instruction-map-uuids
+  "Takes an individual and updates the UUIDs on every instruction-map in its
+   :geneome, except for the ones which are a random insertion."
+  [individual]
+  (update individual :genome
+   (fn [genome]
+     (map (fn [instruction-map]
+            (if (:random-insertion instruction-map)
+              (dissoc instruction-map :random-insertion)
+              (assoc instruction-map
+                     :parent-uuid (:uuid instruction-map)
+                     :uuid (java.util.UUID/randomUUID))))
+          genome))))
+
 (defn breed
   "Returns an individual bred from the given population using the given parameters."
   [agt ;necessary since breed is called using swap! or send, even though not used
