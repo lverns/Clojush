@@ -87,18 +87,20 @@
    and performs them to create a new individual. Uses recursive helper function
    even with a single operator by putting that operator in a vector."
   [operator population location rand-gen 
-   {:keys [max-points] :as argmap}]
+   {:keys [max-points
+           track-instruction-maps] :as argmap}]
   (let [first-parent (select population location argmap)
         operator-vector (if (sequential? operator) operator (vector operator))
         child (perform-genetic-operator-list operator-vector
                                              (assoc first-parent :parent-uuids (vector (:uuid first-parent)))
                                              population location rand-gen argmap)]
-    (if (> (count (:genome child))
-           (/ max-points 4)) ; Check if too big
-      (revert-too-big-child first-parent child argmap)
-        (assoc child
-               :genetic-operators operator
-               ))))
+    (conditional-thread
+     (assoc child :genetic-operators operator)
+     #(when (> (count (:genome %))
+                (/ max-points 4))
+      (revert-too-big-child first-parent % argmap))
+     #(when track-instruction-maps
+        (update-instruction-map-uuids %)))))
 
 (defn update-instruction-map-uuids
   "Takes an individual and updates the UUIDs on every instruction-map in its
@@ -126,5 +128,4 @@
                             (reductions
                              #(assoc %2 1 (+ (second %1) (second %2)))
                              (vec genetic-operator-probabilities)))]
-      (update-instruction-map-uuids
-       (perform-genetic-operator genetic-operator population location rand-gen argmap)))))
+       (perform-genetic-operator genetic-operator population location rand-gen argmap))))
